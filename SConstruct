@@ -163,6 +163,12 @@ AddOption('--testbed',
     type    = 'string')
 runnerEnv['TESTBED'] = GetOption('testbed')
 
+AddOption('--broker',
+    dest      = 'broker',
+    default   = 'argus.paris.inria.fr', 
+    type    = 'string')
+runnerEnv['BROKER'] = GetOption('broker')
+
 AddOption('--ovdebug',
     dest      = 'debugOpt',
     default   = False,
