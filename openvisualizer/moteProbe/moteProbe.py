@@ -126,14 +126,14 @@ class TestbedMoteFinder (object):
         
         print "connected to : {0}".format(TESTBED_BROKER_ADDRESS)
         
-        client.subscribe('opentestbed/deviceType/box/deviceId/+/resp/status')
+        client.subscribe('{0}/deviceType/box/deviceId/+/resp/status'.format(TESTBED))
         
         payload_status = {
             'token':       123,
         }
         # publish the cmd message
         client.publish(
-            topic   = 'opentestbed/deviceType/box/deviceId/all/cmd/status',
+            topic   = '{0}/deviceType/box/deviceId/all/cmd/status'.format(TESTBED),
             payload = json.dumps(payload_status),
         )
 
@@ -300,7 +300,7 @@ class moteProbe(threading.Thread):
                     self.serial = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
                     self.serial.connect((self.iotlabmote,20000))
                 elif self.mode==self.MODE_TESTBED:
-                    # subscribe to topic: opentestbed/deviceType/mote/deviceId/00-12-4b-00-14-b5-b6-49/notif/frommoteserialbytes
+                    # subscribe to topic: {0}/deviceType/mote/deviceId/00-12-4b-00-14-b5-b6-49/notif/frommoteserialbytes
                     self.mqtt_seriaqueue = self.serialbytes_queue
                 else:
                     raise SystemError()
@@ -430,7 +430,7 @@ class moteProbe(threading.Thread):
     
     def _on_mqtt_connect(self, client, userdata, flags, rc):
         
-        client.subscribe('opentestbed/deviceType/mote/deviceId/{0}/notif/frommoteserialbytes'.format(self.testbedmote_eui64))
+        client.subscribe('{0}/deviceType/mote/deviceId/{1}/notif/frommoteserialbytes'.format(TESTBED, self.testbedmote_eui64))
         
     def _on_mqtt_message(self, client, userdata, message):
     
@@ -454,6 +454,6 @@ class moteProbe(threading.Thread):
         }
 
         self.mqttclient.publish(
-            topic='opentestbed/deviceType/mote/deviceId/' + self.testbedmote_eui64 + '/cmd/tomoteserialbytes',
+            topic='{0}/deviceType/mote/deviceId/'.format(TESTBED) + self.testbedmote_eui64 + '/cmd/tomoteserialbytes',
             payload=json.dumps(payload)
         )
