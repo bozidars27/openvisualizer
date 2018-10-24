@@ -31,12 +31,9 @@ import openvisualizer.openvisualizer_utils as u
 from   openvisualizer.moteConnector import OpenParser
 from   openvisualizer.moteConnector.SerialTester import SerialTester
 
+from argparse import ArgumentParser
+
 #============================ defines =========================================
-
-OPENTESTBED_BROKER_ADDRESS          = "broker.mqttdashboard.com"
-
-BAUDRATE_LOCAL_BOARD  = 115200
-BAUDRATE_IOTLAB       = 500000
 
 #============================ functions =======================================
 
@@ -65,14 +62,14 @@ def findSerialPorts(isIotMotes=False):
                 except:
                     pass
                 else:
-                    serialports.append( (str(val[1]),BAUDRATE_LOCAL_BOARD) )
+                    serialports.append( (str(val[1]), BAUDRATE) )
     elif os.name=='posix':
         if platform.system() == 'Darwin':
             portMask = ['/dev/tty.usbserial-*']
         else:
             portMask = ['/dev/ttyUSB*']
         for mask in portMask :
-            serialports += [(s,BAUDRATE_IOTLAB) for s in glob.glob(mask)]
+            serialports += [(s,BAUDATE) for s in glob.glob(mask)]
 
     mote_ports = []
 
@@ -82,13 +79,13 @@ def findSerialPorts(isIotMotes=False):
     else:
         # Find all OpenWSN motes that answer to TRIGGERSERIALECHO commands
         for port in serialports:
-            probe = moteProbe(serialport=(port[0],BAUDRATE_LOCAL_BOARD))
+            probe = moteProbe(serialport=(port[0],BAUDATE))
             tester = SerialTester(probe.portname)
             tester.setNumTestPkt(1)
             tester.setTimeout(2)
             tester.test(blocking=True)
             if tester.getStats()['numOk'] >= 1:
-                mote_ports.append((port[0],BAUDRATE_LOCAL_BOARD));
+                mote_ports.append((port[0],BAUDRATE));
             probe.close()
             probe.join()
     
@@ -171,8 +168,28 @@ class moteProbe(threading.Thread):
         MODE_IOTLAB,
         MODE_TESTBED,
     ]
+
+    def get_argument_vals(self, argspace):
+        global OPENTESTBED_BROKER_ADDRESS
+        global TESTBED
+        global BAUDRATE
+   
+        OPENTESTBED_BROKER_ADDRESS = argspace.broker
+        TESTBED = argspace.testbed
+
+        # conditional variable defining
+        if TESTBED == '': # no testbed, local board is used
+            BAUDRATE = 115200
+        elif TESTBED == 'opentestbed':
+            BAUDRATE = 115200
+        elif TESTBED == 'iotlab':
+            BAUDRATE = 500000
     
     def __init__(self, serialport=None, emulatedMote=None, iotlabmote=None, testbedmote=None):
+
+        self.get_argument_vals(
+            ArgumentParser().parse_known_args()[0]
+        )
         
         # verify params
         if   serialport:
