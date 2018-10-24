@@ -96,35 +96,35 @@ def findSerialPorts(isIotMotes=False):
 
 #============================ class ===========================================
 
-class OpentestbedMoteFinder (object):
+class TestbedMoteFinder (object):
 
-    OPENTESTBED_RESP_STATUS_TIMEOUT     = 10
+    TESTBED_RESP_STATUS_TIMEOUT     = 10
 
     def __init__(self):
-        self.opentestbed_motelist = set()
+        self.testbed_motelist = set()
         
-    def get_opentestbed_motelist(self):
+    def get_testbed_motelist(self):
         
         # create mqtt client
         mqtt_client                = mqtt.Client('FindMotes')
         mqtt_client.on_connect     = self._on_mqtt_connect
         mqtt_client.on_message     = self._on_mqtt_message
-        mqtt_client.connect(OPENTESTBED_BROKER_ADDRESS)
+        mqtt_client.connect(TESTBED_BROKER_ADDRESS)
         mqtt_client.loop_start()
         
         # wait for a while to gather the response from otboxes
-        time.sleep(self.OPENTESTBED_RESP_STATUS_TIMEOUT)
+        time.sleep(self.TESTBED_RESP_STATUS_TIMEOUT)
         
         # close the client and return the motes list
         mqtt_client.loop_stop()
         
-        print "{0} motes are found".format(len(self.opentestbed_motelist))
+        print "{0} motes are found".format(len(self.testbed_motelist))
         
-        return self.opentestbed_motelist
+        return self.testbed_motelist
 
     def _on_mqtt_connect(self, client, userdata, flags, rc):
         
-        print "connected to : {0}".format(OPENTESTBED_BROKER_ADDRESS)
+        print "connected to : {0}".format(TESTBED_BROKER_ADDRESS)
         
         client.subscribe('opentestbed/deviceType/box/deviceId/+/resp/status')
         
@@ -152,7 +152,7 @@ class OpentestbedMoteFinder (object):
         
         for mote in payload_status['returnVal']['motes']:
             if 'EUI64' in mote:
-                self.opentestbed_motelist.add(
+                self.testbed_motelist.add(
                     (host, mote['EUI64'])
                 )
 
@@ -161,7 +161,7 @@ class moteProbe(threading.Thread):
     MODE_SERIAL    = 'serial'
     MODE_EMULATED  = 'emulated'
     MODE_IOTLAB    = 'IoT-LAB'
-    MODE_TESTBED   = 'opentestbed'
+    MODE_TESTBED   = 'testbed'
     MODE_ALL       = [
         MODE_SERIAL,
         MODE_EMULATED,
@@ -170,11 +170,11 @@ class moteProbe(threading.Thread):
     ]
 
     def get_argument_vals(self, argspace):
-        global OPENTESTBED_BROKER_ADDRESS
+        global TESTBED_BROKER_ADDRESS
         global TESTBED
         global BAUDRATE
    
-        OPENTESTBED_BROKER_ADDRESS = argspace.broker
+        TESTBED_BROKER_ADDRESS = argspace.broker
         TESTBED = argspace.testbed
 
         # conditional variable defining
@@ -228,7 +228,7 @@ class moteProbe(threading.Thread):
             self.portname           = 'IoT-LAB{0}'.format(iotlabmote)
         elif self.mode==self.MODE_TESTBED:
             (self.testbed_host, self.testbedmote_eui64) = testbedmote
-            self.portname           = 'opentestbed_{0}_{1}'.format(self.testbed_host, self.testbedmote_eui64)
+            self.portname           = 'testbed_{0}_{1}'.format(self.testbed_host, self.testbedmote_eui64)
         else:
             raise SystemError()
         
@@ -257,7 +257,7 @@ class moteProbe(threading.Thread):
             self.mqttclient                = mqtt.Client()
             self.mqttclient.on_connect     = self._on_mqtt_connect
             self.mqttclient.on_message     = self._on_mqtt_message
-            self.mqttclient.connect(OPENTESTBED_BROKER_ADDRESS)
+            self.mqttclient.connect(TESTBED_BROKER_ADDRESS)
             self.mqttclient.loop_start()
         
         # initialize the parent class
