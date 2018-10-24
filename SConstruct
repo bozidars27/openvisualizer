@@ -157,11 +157,11 @@ AddOption('--trace',
     action    = 'store_true')
 runnerEnv['TRACEOPT'] = GetOption('traceOpt')
 
-AddOption('--opentestbed',
-    dest      = 'opentestbed',
-    default   = False,
-    action    = 'store_true')
-runnerEnv['OPENTESTBED'] = GetOption('opentestbed')
+AddOption('--testbed',
+    dest      = 'testbed',
+    default   = '',  
+    type    = 'string')
+runnerEnv['TESTBED'] = GetOption('testbed')
 
 AddOption('--ovdebug',
     dest      = 'debugOpt',
