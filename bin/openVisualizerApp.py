@@ -336,7 +336,7 @@ def main(parser=None):
                            'simCount    = {0}'.format(argspace.numMotes),
                            'trace       = {0}'.format(argspace.trace),
                            'debug       = {0}'.format(argspace.debug),
-                           'testbedmotes= {0}'.format(argspace.testbedmotes),
+                           'testbedmotes= {0}'.format(argspace.testbed),
                            
                            'usePageZero = {0}'.format(argspace.usePageZero)],
             )))
@@ -358,7 +358,7 @@ def main(parser=None):
         usePageZero     = argspace.usePageZero,
         simTopology     = argspace.simTopology,
         iotlabmotes     = argspace.iotlabmotes,
-        testbedmotes    = argspace.testbedmotes,
+        testbedmotes    = argspace.testbed != '', 
         pathTopo        = argspace.pathTopo
     )
 
@@ -411,11 +411,10 @@ def _addParserArgs(parser):
         action     = 'store',
         help       = 'comma-separated list of IoT-LAB motes (e.g. "wsn430-9,wsn430-34,wsn430-3")'
     )
-    parser.add_argument('-tb', '--opentestbed',
-        dest       = 'testbedmotes',
-        default    = False,
-        action     = 'store_true',
-        help       = 'connect motes from opentestbed'
+    parser.add_argument('-tb', '--testbed',
+        dest       = 'testbed',
+        default    = '',
+        type     = 'string',
     )
     parser.add_argument('-i', '--pathTopo', 
         dest       = 'pathTopo',
