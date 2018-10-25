@@ -414,7 +414,7 @@ def _addParserArgs(parser):
     parser.add_argument('-tb', '--testbed',
         dest       = 'testbed',
         default    = '',
-        type     = 'string',
+        action     = 'store'
     )
     parser.add_argument('-i', '--pathTopo', 
         dest       = 'pathTopo',
