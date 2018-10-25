@@ -58,7 +58,7 @@ def uiRunner(target, source, env):
     if env['DEBUGOPT']:
         argList.append('--debug')
     if env['TESTBED']:
-        argList.append('--testbed')
+        argList.append('--testbed={0}'.format(env['TESTBED']))
 
     if env['USEPAGEZERO']:
         argList.append('--usePageZero')
