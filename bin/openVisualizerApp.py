@@ -416,6 +416,11 @@ def _addParserArgs(parser):
         default    = '',
         action     = 'store'
     )
+    parser.add_argument('-b', '--broker',
+        dest       = 'broker',
+        default    = '',
+        action     = 'store'
+    )
     parser.add_argument('-i', '--pathTopo', 
         dest       = 'pathTopo',
         default    = '',

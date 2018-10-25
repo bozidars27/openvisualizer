@@ -59,6 +59,8 @@ def uiRunner(target, source, env):
         argList.append('--debug')
     if env['TESTBED']:
         argList.append('--testbed={0}'.format(env['TESTBED']))
+    if env['BROKER']:
+        argList.append('--broker={0}'.format(env['BROKER']))
 
     if env['USEPAGEZERO']:
         argList.append('--usePageZero')
