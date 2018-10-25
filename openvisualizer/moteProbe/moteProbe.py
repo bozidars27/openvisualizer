@@ -36,6 +36,21 @@ from argparse import ArgumentParser
 #============================ defines =========================================
 
 #============================ functions =======================================
+def get_argument_vals(argspace):
+        global TESTBED_BROKER_ADDRESS
+        global TESTBED
+        global BAUDRATE
+   
+        TESTBED_BROKER_ADDRESS = argspace.broker
+        TESTBED = argspace.testbed
+
+        # conditional variable defining
+        if TESTBED == '': # no testbed, local board is used
+            BAUDRATE = 115200
+        elif TESTBED == 'opentestbed':
+            BAUDRATE = 115200
+        elif TESTBED == 'iotlab':
+            BAUDRATE = 500000
 
 def findSerialPorts(isIotMotes=False):
     '''
@@ -101,6 +116,9 @@ class TestbedMoteFinder (object):
     TESTBED_RESP_STATUS_TIMEOUT     = 10
 
     def __init__(self):
+        get_argument_vals(
+            ArgumentParser().parse_known_args()[0]
+        )
         self.testbed_motelist = set()
         
     def get_testbed_motelist(self):
@@ -168,26 +186,10 @@ class moteProbe(threading.Thread):
         MODE_IOTLAB,
         MODE_TESTBED,
     ]
-
-    def get_argument_vals(self, argspace):
-        global TESTBED_BROKER_ADDRESS
-        global TESTBED
-        global BAUDRATE
-   
-        TESTBED_BROKER_ADDRESS = argspace.broker
-        TESTBED = argspace.testbed
-
-        # conditional variable defining
-        if TESTBED == '': # no testbed, local board is used
-            BAUDRATE = 115200
-        elif TESTBED == 'opentestbed':
-            BAUDRATE = 115200
-        elif TESTBED == 'iotlab':
-            BAUDRATE = 500000
     
     def __init__(self, serialport=None, emulatedMote=None, iotlabmote=None, testbedmote=None):
 
-        self.get_argument_vals(
+        get_argument_vals(
             ArgumentParser().parse_known_args()[0]
         )
         
