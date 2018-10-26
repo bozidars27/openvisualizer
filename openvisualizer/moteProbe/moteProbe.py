@@ -52,6 +52,19 @@ def get_argument_vals(argspace):
         elif TESTBED == 'iotlab':
             BAUDRATE = 500000
 
+def _addParserArgs(parser):
+    parser.add_argument('-tb', '--testbed',
+        dest       = 'testbed',
+        default    = '',
+        action     = 'store'
+    )
+    parser.add_argument('-b', '--broker',
+        dest       = 'broker',
+        default    = '',
+        action     = 'store'
+    )
+
+
 def findSerialPorts(isIotMotes=False):
     '''
     Returns the serial ports of the motes connected to the computer.
@@ -116,9 +129,12 @@ class TestbedMoteFinder (object):
     TESTBED_RESP_STATUS_TIMEOUT     = 10
 
     def __init__(self):
+        parser = ArgumentParser()
+        _addParserArgs(parser)
         get_argument_vals(
-            ArgumentParser().parse_known_args()[0]
+            parser.parse_known_args()[0]
         )
+        
         self.testbed_motelist = set()
         
     def get_testbed_motelist(self):
@@ -189,8 +205,10 @@ class moteProbe(threading.Thread):
     
     def __init__(self, serialport=None, emulatedMote=None, iotlabmote=None, testbedmote=None):
 
+        parser = ArgumentParser()
+        _addParserArgs(parser)
         get_argument_vals(
-            ArgumentParser().parse_known_args()[0]
+            parser.parse_known_args()[0]
         )
         
         # verify params
